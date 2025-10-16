@@ -33,7 +33,8 @@ class Heatmap:
 		requests = [pairs[i:i + n] for i in range(0, len(pairs), n)]
 
 		self.responses = []
-		for chunk in requests:
+		for index, chunk in enumerate(requests):
+			print(f"fetching {index}/{len(requests)}{" " * 5}", end="\r")
 			cache_session = requests_cache.CachedSession('.cache', expire_after=3600)
 			retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
 			openmeteo = openmeteo_requests.Client(session=retry_session)
@@ -56,5 +57,5 @@ class Heatmap:
 			temp = current.Variables(0).Value()
 			hlsColor = (temp / 10, 0.5, 0.5)
 			rgbColor = colorsys.hls_to_rgb(*hlsColor)
-			cell = (rgb256(*(round(c * 100) for c in rgbColor)), '█', reset)
+			cell = (rgb256(*(round(c * 100) for c in rgbColor)), '██', reset)
 			print(''.join(map(str, cell)), end="")
