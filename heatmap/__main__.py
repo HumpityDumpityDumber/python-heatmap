@@ -16,16 +16,19 @@ def main():
 
     args = parser.parse_args()
 
-    if args.resolution != "None":
+    if args.resolution != None:
         res = args.resolution
     else:
         res = 5
 
     heatmap = Heatmap((args.topLeftX, args.topLeftY), (args.bottomRightX, args.bottomRightY), res)
     heatmap.genGrid()
-    print("fetching data...", end="\r", flush=True)
+    print("fetching data...", end="\r")
     heatmap.fetchData()
-    print(" " * 16, end="\r")
+    print(" " * 20, end="\r")
     heatmap.renderMap()
     print("\ndone!", end="\r")
     print(" " * 5, end="\r")
+
+if __name__ == "__main__":
+    main()
