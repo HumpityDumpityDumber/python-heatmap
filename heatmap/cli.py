@@ -2,19 +2,13 @@ import argparse
 import os
 from .heatmap import Heatmap
 
-def float_0_90(value):
-    f = float(value)
-    if not 0 <= f <= 90:
-        raise argparse.ArgumentTypeError(f"{value} must be between 0 and 90")
-    return f
-
 def main():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("topLeftX", type=float_0_90, help="Angle in degrees (0–90)")
-    parser.add_argument("topLeftY", type=float_0_90, help="Angle in degrees (0–90)")
-    parser.add_argument("bottomRightX", type=float_0_90, help="Angle in degrees (0–90)")
-    parser.add_argument("bottomRightY", type=float_0_90, help="Angle in degrees (0–90)")
+    parser.add_argument("topLeftX", type=float, help="top left point longitude (W)")
+    parser.add_argument("topLeftY", type=float, help="top left point latitude (N)")
+    parser.add_argument("bottomRightX", type=float, help="bottom right point longitude (W)")
+    parser.add_argument("bottomRightY", type=float, help="bottom right point latitude (N)")
 
     parser.add_argument("-r", "--resolution", type=int)
 
