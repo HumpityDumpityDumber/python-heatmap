@@ -28,7 +28,7 @@ class Heatmap:
 
 
 	def fetchData(self):
-		n = 5
+		n = 120
 		pairs = list(zip(self.lats, self.longs))
 		requests = [pairs[i:i + n] for i in range(0, len(pairs), n)]
 
@@ -38,24 +38,25 @@ class Heatmap:
 			cache_session = requests_cache.CachedSession('.cache', expire_after=3600)
 			retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
 			openmeteo = openmeteo_requests.Client(session=retry_session)
-
-			for lat, long in chunk:
-				params = {
-					"latitude": lat,
-					"longitude": long,
-					"current": "temperature_2m",
-				}
-				self.responses.extend(openmeteo.weather_api("https://api.open-meteo.com/v1/forecast", params=params))
-
+			lats, longs = zip(*chunk)
+			params = {
+				"latitude": lats,
+				"longitude": longs,
+				"current": "temperature_2m",
+			}
+			self.responses.extend(openmeteo.weather_api("https://api.open-meteo.com/v1/forecast", params=params))
+			# TODO: space requests to avoid rate limiting
 
 	def renderMap(self):
-		for i, item in enumerate(self.responses):
+		for i, response in enumerate(self.responses):
 			if i % (self.res) == 0 and i != 0:
 				print()
-			response = item
-			current = response.Current()
-			temp = current.Variables(0).Value()
-			hlsColor = (temp / 10, 0.5, 0.5)
+			cTemp = response.Current().Variables(0).Value()
+			fTemp = cTemp * 9/5 + 32
+
+			hlsColor = (cTemp / 10, 0.5, 0.5)
 			rgbColor = colorsys.hls_to_rgb(*hlsColor)
+
 			cell = (rgb256(*(round(c * 100) for c in rgbColor)), '██', reset)
+			# cell = (rgb256(*(round(c * 100) for c in rgbColor)), f"[{round(cTemp)}]", reset)
 			print(''.join(map(str, cell)), end="")
