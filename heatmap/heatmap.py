@@ -19,8 +19,8 @@ class Heatmap:
 		self.lats = []
 		self.longs = []
 
-		for i in range(self.res + 1):
-			for j in range(self.res + 1):
+		for i in range(self.res):
+			for j in range(self.res):
 				lat = self.y1 + (yDiff / self.res) * i
 				long = self.x1 + (xDiff / self.res) * j
 				self.lats.append(lat)
@@ -50,7 +50,7 @@ class Heatmap:
 
 	def renderMap(self):
 		for i, item in enumerate(self.responses):
-			if i % (self.res + 1) == 0 and i != 0:
+			if i % (self.res) == 0 and i != 0:
 				print()
 			response = item
 			current = response.Current()
